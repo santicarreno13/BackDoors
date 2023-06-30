@@ -49,7 +49,7 @@ def upserver():
     server.bind(('192.168.20.109',7777))
     server.listen(1)
 
-    print("Corriendo el servidor")
+    print("Corriendo el servidor, esperando conexiones")
 
     target, ip = server.accept()
     print("Conexion recibida de: " + str(ip[0]))

